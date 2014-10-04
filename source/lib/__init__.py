@@ -55,6 +55,7 @@ def check_for_meta(content, url):
     """
     soup = BeautifulSoup(content, "html.parser")
     result = soup.find("meta")
+
     if result and 'content' in result.attrs:
         for attr, value in result.attrs.items():
             if attr == 'http-equiv' and value.lower() == 'refresh':
@@ -126,7 +127,9 @@ def get_url(url, timeout, user_agent=None):
     if new_redirect_url and urlsplit(new_redirect_url).scheme == 'market':
         new_redirect_url = fix_market_url(new_redirect_url)
 
-    return prepare_url(new_redirect_url), redirect_type, content
+    new_redirect_url = prepare_url(new_redirect_url)
+
+    return new_redirect_url, redirect_type, content
 
 
 def get_redirect_history(url, timeout, max_redirects=30, user_agent=None):
@@ -150,7 +153,7 @@ def get_redirect_history(url, timeout, max_redirects=30, user_agent=None):
     url = prepare_url(url)
     history_types = []
     history_urls = [url]
-    redirect_url = url
+    #redirect_url = url
 
     # ignore mm / ok domains
     if re.match(MM_URL, url) or re.match(OK_URL, url):
@@ -159,7 +162,7 @@ def get_redirect_history(url, timeout, max_redirects=30, user_agent=None):
     content = None
     while True:
         redirect_url, redirect_type, content = get_url(
-            url=redirect_url,
+            url=url,
             timeout=timeout,
             user_agent=user_agent
         )
